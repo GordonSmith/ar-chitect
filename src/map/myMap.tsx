@@ -1,11 +1,14 @@
 import * as React from "react";
-import * as ReactDOM from "react-dom";
+// import * as ReactDOM from "react-dom";
 import DeckGL from '@deck.gl/react/typed';
-import { MapView, FirstPersonView } from '@deck.gl/core/typed';
+// import { MapView, FirstPersonView } from '@deck.gl/core/typed';
 import { StaticMap, MapContext, NavigationControl } from 'react-map-gl';
-import { ScenegraphLayer } from '@deck.gl/mesh-layers/typed';
-import { cube } from "../basic-cube.js";
-import { useAR } from "../ar/index";
+// import { ScenegraphLayer } from '@deck.gl/mesh-layers/typed';
+// import { cube } from "../basic-cube.js";
+
+import { useAR } from "../ar/myAR";
+
+const info = document.getElementById('info') as HTMLDivElement;
 
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/positron-nolabels-gl-style/style.json';
 const NAV_CONTROL_STYLE = {
@@ -17,10 +20,10 @@ const NAV_CONTROL_STYLE = {
 // import "react-gl.css";
 
 //  Default key should be in sync with packages/map/src/leaflet/MapBox.ts
-if (!(window as any).__hpcc_mapbox_apikey) {
-    console.warn("__hpcc_mapbox_apikey does not contain a valid API key, reverting to developers key (expect limited performance)");
-}
-const MAPBOX_ACCESS_TOKEN = (window as any).__hpcc_mapbox_apikey || "pk.eyJ1IjoibGVzY2htb28iLCJhIjoiY2psY2FqY3l3MDhqNDN3cDl1MzFmZnkwcCJ9.HRoFwmz1j80gyz18ruggqw";
+// if (!(window as any).__hpcc_mapbox_apikey) {
+//     console.warn("__hpcc_mapbox_apikey does not contain a valid API key, reverting to developers key (expect limited performance)");
+// }
+// const MAPBOX_ACCESS_TOKEN = (window as any).__hpcc_mapbox_apikey || "pk.eyJ1IjoibGVzY2htb28iLCJhIjoiY2psY2FqY3l3MDhqNDN3cDl1MzFmZnkwcCJ9.HRoFwmz1j80gyz18ruggqw";
 
 // Viewport settings
 const INITIAL_VIEW_STATE = {
@@ -33,7 +36,7 @@ const INITIAL_VIEW_STATE = {
 
 function radians_to_degrees(radians: number) {
     var pi = Math.PI;
-    return radians * (180 / pi);
+    return radians * (180 / pi); ``
 }
 
 
@@ -59,7 +62,7 @@ export function MyMap() {
     //     _lighting: 'pbr'
     // });
 
-    const [x, y, rotX, rotY, rotZ, fov, zoom] = useAR();
+    const [x, y, rotX, rotY, rotZ, fov, zoom, error, tick] = useAR();
 
     const [viewState, setViewState] = React.useState(INITIAL_VIEW_STATE);
 
@@ -68,12 +71,13 @@ export function MyMap() {
             ...viewState,
             longitude: x,
             latitude: y,
-            pitch: radians_to_degrees(rotX),
+            // pitch: radians_to_degrees(rotX),
             bearing: radians_to_degrees(rotY),
             // zoom: camera.zoom
         });
-        console.log(x, y, radians_to_degrees(rotX), radians_to_degrees(rotY), rotZ, fov, zoom)
-    }, [x, y, rotX, rotY, rotZ, fov, zoom]);
+        info.innerText = `x: ${x}, y: ${y}, rotX: ${radians_to_degrees(rotX)}, rotY: ${radians_to_degrees(rotY)}, rotZ: ${rotZ}, fov: ${fov}, zoom: ${zoom}, error: ${error}, tick: ${tick}`;
+        // console.log(x, y, radians_to_degrees(rotX), radians_to_degrees(rotY), rotZ, fov, zoom)
+    }, [x, y, rotX, rotY, rotZ, fov, zoom, error]);
 
     return <DeckGL
         viewState={viewState}

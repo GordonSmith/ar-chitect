@@ -8,7 +8,7 @@
             "name": "index.html",
             "type": "msedge",
             "request": "launch",
-            "url": "http://127.0.0.1:5173/",
+            "url": "https://192.168.0.173:5173/ar-chitect/",
             "runtimeArgs": [],
             "webRoot": "${workspaceRoot}"
         },

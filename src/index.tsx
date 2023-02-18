@@ -1,5 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+
+// globalThis.THREE = await import("three");
+// globalThis.THREEx = await import("@ar-js-org/ar.js/three.js/build/ar-threex-location-only.js") as any;
+
 import { MyMap } from './map/myMap';
 
 import './index.css'
@@ -18,5 +22,3 @@ resize();
 function resize() {
   splitPanel.setAttribute("orientation", window.innerHeight > window.innerWidth ? "vertical" : "horizontal");
 }
-
-// MyAR();
