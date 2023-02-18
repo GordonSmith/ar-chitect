@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React + TS</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@hpcc-js/wc-layout"></script>
+    <!-- <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css' rel='stylesheet' /> -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css" rel="stylesheet">
+</head>
+
+<body>
+    <hpcc-splitpanel id="split-panel" orientation="horizontal" style="width:100%;height:100%">
+        <div style="overflow:auto;min-width:48px;height:100%">
+            <div id="root"></div>
+        </div>
+        <div style="overflow:auto;min-width:48px">
+            <video id='video1' autoplay playsinline style='display:none'></video>
+            <canvas id="canvas1" style='background-color: black; width:100%; height:100%; display:block'></canvas>
+        </div>
+    </hpcc-splitpanel>
+    <script type="module" src="/src/index.tsx"></script>
+</body>
+
+</html>
