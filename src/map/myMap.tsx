@@ -1,5 +1,6 @@
 import * as React from "react";
 // import * as ReactDOM from "react-dom";
+import { MapboxOverlay as DeckOverlay } from '@deck.gl/mapbox/typed';
 import DeckGL from '@deck.gl/react/typed';
 // import { MapView, FirstPersonView } from '@deck.gl/core/typed';
 import { StaticMap, MapContext, NavigationControl } from 'react-map-gl';
@@ -29,16 +30,13 @@ const NAV_CONTROL_STYLE = {
 const INITIAL_VIEW_STATE = {
     longitude: -122.41669,
     latitude: 37.7853,
-    zoom: 13,
-    pitch: 33,
-    bearing: 0
+    zoom: 16,
+    pitch: 90,
+    bearing: 0,
+    minPitch: 0,
+    maxPitch: 85,
+    altitude: 0.1
 };
-
-function radians_to_degrees(radians: number) {
-    var pi = Math.PI;
-    return radians * (180 / pi); ``
-}
-
 
 export function MyMap() {
     /**
@@ -67,15 +65,16 @@ export function MyMap() {
     const [viewState, setViewState] = React.useState(INITIAL_VIEW_STATE);
 
     React.useEffect(() => {
+        const pitch = 90 - rotX;
         setViewState({
             ...viewState,
             longitude: x,
             latitude: y,
-            // pitch: radians_to_degrees(rotX),
-            bearing: radians_to_degrees(rotY),
+            pitch: pitch > INITIAL_VIEW_STATE.maxPitch ? INITIAL_VIEW_STATE.maxPitch : pitch,
+            bearing: rotY,
             // zoom: camera.zoom
         });
-        info.innerText = `x: ${x}, y: ${y}, rotX: ${radians_to_degrees(rotX)}, rotY: ${radians_to_degrees(rotY)}, rotZ: ${rotZ}, fov: ${fov}, zoom: ${zoom}, error: ${error}`;
+        info.innerText = `error: ${error}, x: ${x}, y: ${y}, rotX: ${pitch}, rotY: ${rotY}, rotZ: ${rotZ}, fov: ${fov}, zoom: ${zoom}`;
         // console.log(x, y, radians_to_degrees(rotX), radians_to_degrees(rotY), rotZ, fov, zoom)
     }, [x, y, rotX, rotY, rotZ, fov, zoom, error]);
 

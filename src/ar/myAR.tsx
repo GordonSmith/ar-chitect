@@ -4,49 +4,37 @@ import * as THREE from 'three';
 // @ts-ignore
 import * as  THREEx from '../../three.js/src/location-based/index.js';
 
-const info = document.getElementById('info') as HTMLDivElement;
-
 const canvas = document.getElementById('canvas1') as HTMLCanvasElement;
 
 
-function radians_to_degrees(radians: number) {
-    var pi = Math.PI;
-    return radians * (180 / pi);
-}
-
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(60, 1.33, 0.1, 10000);
-const renderer = new THREE.WebGLRenderer({ canvas: canvas });
-
-const arjs = new THREEx.LocationBased(scene, camera);
-const cam = new THREEx.WebcamRenderer(renderer);
-
-const deviceOrientationControls = new THREEx.DeviceOrientationControls(camera);
-
-const geom = new THREE.BoxGeometry(20, 20, 20);
-const mtl = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-const box = new THREE.Mesh(geom, mtl);
-arjs.add(box, -0.72, 51.051);
-
-export function useAR() {
+export function useAR(): [number, number, number, number, number, number, number, string] {
 
     const [x, setX] = React.useState(0);
     const [y, setY] = React.useState(0);
-    const [rotX, setRotX] = React.useState(0);
-    const [rotY, setRotY] = React.useState(0);
+    const [rotX, setRotX] = React.useState<number>(0);
+    const [rotY, setRotY] = React.useState<number>(0);
     const [rotZ, setRotZ] = React.useState(0);
     const [fov, setFov] = React.useState(0);
     const [zoom, setZoom] = React.useState(0);
-    const [error, setError] = React.useState(0);
+    const [error, setError] = React.useState("");
 
     React.useEffect(() => {
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, 1.33, 0.1, 10000);
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas });
+        const arjs = new THREEx.LocationBased(scene, camera);
+
+        // const geom = new THREE.BoxGeometry(20, 20, 20);
+        // const mtl = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        // const box = new THREE.Mesh(geom, mtl);
+        // arjs.add(box, -0.72, 51.051);
+
+        const cam = new THREEx.WebcamRenderer(renderer);
+        const deviceOrientationControls = new THREEx.DeviceOrientationControls(camera);
 
         arjs.on("gpsupdate", async (pos: any, deltaDist: number) => {
             setX(pos.coords.longitude);
             setY(pos.coords.latitude);
-            setRotX(camera.rotation.x);
-            setRotY(camera.rotation.y);
-            setRotZ(camera.rotation.z);
         });
 
         arjs.startGps();
@@ -69,8 +57,8 @@ export function useAR() {
             cam.update();
             renderer.render(scene, camera);
 
-            setRotX(camera.rotation.x);
-            setRotY(camera.rotation.y);
+            setRotX(THREE.MathUtils.radToDeg(-camera.rotation.x));
+            setRotY(THREE.MathUtils.radToDeg(-camera.rotation.y));
             setRotZ(camera.rotation.z);
             requestID = requestAnimationFrame(render);
         };
@@ -78,8 +66,15 @@ export function useAR() {
 
         return () => {
             cancelAnimationFrame(requestID);
+
             arjs.stopGps();
             arjs.on("gpsupdate", undefined);
+
+            deviceOrientationControls.dispose();
+            cam.dispose();
+            renderer.dispose();
+            // camera.dispose();
+            // scene.dispose();
         }
     }, []);
 
