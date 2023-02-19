@@ -1,14 +1,18 @@
 import * as React from "react";
 import * as THREE from 'three';
-
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 // @ts-ignore
 import * as  THREEx from '../../three.js/src/location-based/index.js';
+import { cube } from "../basic-cube";
 
 const canvas = document.getElementById('canvas1') as HTMLCanvasElement;
 
 
-export function useAR(): [number, number, number, number, number, number, number, string] {
+export function useAR(): [number, number, number, number, number, number, number, number, number, number, string] {
 
+    const [xOrig, setXOrig] = React.useState(0);
+    const [yOrig, setYOrig] = React.useState(0);
+    const [zOrig, setZOrig] = React.useState(0);
     const [x, setX] = React.useState(0);
     const [y, setY] = React.useState(0);
     const [rotX, setRotX] = React.useState<number>(0);
@@ -24,17 +28,32 @@ export function useAR(): [number, number, number, number, number, number, number
         const renderer = new THREE.WebGLRenderer({ canvas: canvas });
         const arjs = new THREEx.LocationBased(scene, camera);
 
-        // const geom = new THREE.BoxGeometry(20, 20, 20);
-        // const mtl = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-        // const box = new THREE.Mesh(geom, mtl);
-        // arjs.add(box, -0.72, 51.051);
+        let first = true;
 
         const cam = new THREEx.WebcamRenderer(renderer);
         const deviceOrientationControls = new THREEx.DeviceOrientationControls(camera);
 
+        // const geom = new THREE.BoxGeometry(20, 20, 20);
+        // const mtl = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        // const box = new THREE.Mesh(geom, mtl);
+        // arjs.add(box, 0, 0, 0);
+
         arjs.on("gpsupdate", async (pos: any, deltaDist: number) => {
             setX(pos.coords.longitude);
             setY(pos.coords.latitude);
+            if (first) {
+                first = false;
+                setXOrig(pos.coords.longitude);
+                setYOrig(pos.coords.latitude - 0.0001);
+                setZOrig(pos.coords.altitude);
+                const geom = new THREE.BoxGeometry(20, 20, 20);
+                const mtl = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+                const box = new THREE.Mesh(geom, mtl);
+                const loader = new GLTFLoader();
+                loader.parse(JSON.stringify(cube), "", (gltf) => {
+                    arjs.add(gltf.scene, pos.coords.longitude, pos.coords.latitude - 0.0001, 0);
+                });
+            }
         });
 
         arjs.startGps();
@@ -78,7 +97,7 @@ export function useAR(): [number, number, number, number, number, number, number
         }
     }, []);
 
-    return [x, y, rotX, rotY, rotZ, fov, zoom, error];
+    return [xOrig, yOrig, zOrig, x, y, rotX, rotY, rotZ, fov, zoom, error];
 }
 
 // function initEvents(camera: THREE.PerspectiveCamera) {

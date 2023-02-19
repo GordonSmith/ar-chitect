@@ -4,8 +4,10 @@ import { MapboxOverlay as DeckOverlay } from '@deck.gl/mapbox/typed';
 import DeckGL from '@deck.gl/react/typed';
 // import { MapView, FirstPersonView } from '@deck.gl/core/typed';
 import { StaticMap, MapContext, NavigationControl } from 'react-map-gl';
+import { ScenegraphLayer } from '@deck.gl/mesh-layers/typed';
+
 // import { ScenegraphLayer } from '@deck.gl/mesh-layers/typed';
-// import { cube } from "../basic-cube.js";
+import { cube } from "../basic-cube";
 
 import { useAR } from "../ar/myAR";
 
@@ -60,7 +62,7 @@ export function MyMap() {
     //     _lighting: 'pbr'
     // });
 
-    const [x, y, rotX, rotY, rotZ, fov, zoom, error] = useAR();
+    const [xOrig, yOrig, zOrig, x, y, rotX, rotY, rotZ, fov, zoom, error] = useAR();
 
     const [viewState, setViewState] = React.useState(INITIAL_VIEW_STATE);
 
@@ -76,13 +78,26 @@ export function MyMap() {
         });
         info.innerText = `error: ${error}, x: ${x}, y: ${y}, rotX: ${pitch}, rotY: ${rotY}, rotZ: ${rotZ}, fov: ${fov}, zoom: ${zoom}`;
         // console.log(x, y, radians_to_degrees(rotX), radians_to_degrees(rotY), rotZ, fov, zoom)
-    }, [x, y, rotX, rotY, rotZ, fov, zoom, error]);
+    }, [xOrig, yOrig, x, y, rotX, rotY, rotZ, fov, zoom, error]);
+
+    const layer = new ScenegraphLayer({
+        id: 'scenegraph-layer',
+        data: [cube],
+        pickable: true,
+        scenegraph: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/BoxAnimated/glTF-Binary/BoxAnimated.glb',
+        getPosition: d => {
+            return [xOrig, yOrig, 0];
+        },
+        getOrientation: d => [0, 0, 90],
+        sizeScale: 20,
+        _lighting: 'pbr'
+    });
 
     return <DeckGL
         viewState={viewState}
         controller={true}
         ContextProvider={MapContext.Provider as any}
-        layers={[]}>
+        layers={[layer]}>
         <StaticMap mapStyle={MAP_STYLE} />
         <NavigationControl style={NAV_CONTROL_STYLE} />
     </DeckGL>;
