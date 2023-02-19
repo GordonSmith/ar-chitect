@@ -38,8 +38,6 @@ export function useAR() {
     const [fov, setFov] = React.useState(0);
     const [zoom, setZoom] = React.useState(0);
     const [error, setError] = React.useState(0);
-    const [tick, setTick] = React.useState(0);
-
 
     React.useEffect(() => {
 
@@ -49,29 +47,8 @@ export function useAR() {
             setRotX(camera.rotation.x);
             setRotY(camera.rotation.y);
             setRotZ(camera.rotation.z);
-
-            // setFov(camera.fov);
-            // setZoom(camera.zoom);
-            // setTick(tick + 1);
         });
 
-        // window.addEventListener("gps-camera-update-positon", async (pos) => {
-        //     debugger;
-        // });
-
-        // window.addEventListener("gps-camera-origin-coord-set", async (pos) => {
-        //     debugger;
-        // });
-
-        // window.addEventListener("gps-entity-place-loaded", async (pos) => {
-        //     debugger;
-        // });
-
-        // window.addEventListener("gps-entity-place-update-position", async (pos) => {
-        //     debugger;
-        // });
-
-        // arjs.fakeGps(-0.72, 51.05);
         arjs.startGps();
 
         // initEvents(camera);
@@ -83,7 +60,6 @@ export function useAR() {
                 camera.aspect = aspect;
                 camera.updateProjectionMatrix();
             }
-            setTick(Date.now());
             try {
                 deviceOrientationControls.update();
             } catch (e: any) {
@@ -101,13 +77,13 @@ export function useAR() {
         requestID = requestAnimationFrame(render);
 
         return () => {
+            cancelAnimationFrame(requestID);
             arjs.stopGps();
-            clearInterval(requestID);
+            arjs.on("gpsupdate", undefined);
         }
-
     }, []);
 
-    return [x, y, rotX, rotY, rotZ, fov, zoom, error, tick];
+    return [x, y, rotX, rotY, rotZ, fov, zoom, error];
 }
 
 // function initEvents(camera: THREE.PerspectiveCamera) {

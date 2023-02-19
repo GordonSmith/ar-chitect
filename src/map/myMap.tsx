@@ -62,7 +62,7 @@ export function MyMap() {
     //     _lighting: 'pbr'
     // });
 
-    const [x, y, rotX, rotY, rotZ, fov, zoom, error, tick] = useAR();
+    const [x, y, rotX, rotY, rotZ, fov, zoom, error] = useAR();
 
     const [viewState, setViewState] = React.useState(INITIAL_VIEW_STATE);
 
@@ -75,7 +75,7 @@ export function MyMap() {
             bearing: radians_to_degrees(rotY),
             // zoom: camera.zoom
         });
-        info.innerText = `x: ${x}, y: ${y}, rotX: ${radians_to_degrees(rotX)}, rotY: ${radians_to_degrees(rotY)}, rotZ: ${rotZ}, fov: ${fov}, zoom: ${zoom}, error: ${error}, tick: ${tick}`;
+        info.innerText = `x: ${x}, y: ${y}, rotX: ${radians_to_degrees(rotX)}, rotY: ${radians_to_degrees(rotY)}, rotZ: ${rotZ}, fov: ${fov}, zoom: ${zoom}, error: ${error}`;
         // console.log(x, y, radians_to_degrees(rotX), radians_to_degrees(rotY), rotZ, fov, zoom)
     }, [x, y, rotX, rotY, rotZ, fov, zoom, error]);
 
