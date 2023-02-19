@@ -14,6 +14,20 @@ function radians_to_degrees(radians: number) {
     return radians * (180 / pi);
 }
 
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(60, 1.33, 0.1, 10000);
+const renderer = new THREE.WebGLRenderer({ canvas: canvas });
+
+const arjs = new THREEx.LocationBased(scene, camera);
+const cam = new THREEx.WebcamRenderer(renderer);
+
+const deviceOrientationControls = new THREEx.DeviceOrientationControls(camera);
+
+const geom = new THREE.BoxGeometry(20, 20, 20);
+const mtl = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+const box = new THREE.Mesh(geom, mtl);
+arjs.add(box, -0.72, 51.051);
+
 export function useAR() {
 
     const [x, setX] = React.useState(0);
@@ -26,19 +40,6 @@ export function useAR() {
     const [error, setError] = React.useState(0);
     const [tick, setTick] = React.useState(0);
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, 1.33, 0.1, 10000);
-    const renderer = new THREE.WebGLRenderer({ canvas: canvas });
-
-    const arjs = new THREEx.LocationBased(scene, camera);
-    const cam = new THREEx.WebcamRenderer(renderer);
-
-    const deviceOrientationControls = new THREEx.DeviceOrientationControls(camera);
-
-    const geom = new THREE.BoxGeometry(20, 20, 20);
-    const mtl = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    const box = new THREE.Mesh(geom, mtl);
-    arjs.add(box, -0.72, 51.051);
 
     React.useEffect(() => {
 
