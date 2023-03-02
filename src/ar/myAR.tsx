@@ -7,7 +7,6 @@ import { cube } from "../basic-cube";
 
 const canvas = document.getElementById('canvas1') as HTMLCanvasElement;
 
-
 export function useAR(): [number, number, number, number, number, number, number, number, number, number, string] {
 
     const [xOrig, setXOrig] = React.useState(0);
@@ -44,19 +43,20 @@ export function useAR(): [number, number, number, number, number, number, number
             if (first) {
                 first = false;
                 setXOrig(pos.coords.longitude);
-                setYOrig(pos.coords.latitude - 0.0001);
+                setYOrig(pos.coords.latitude - 0.001);
                 setZOrig(pos.coords.altitude);
                 const geom = new THREE.BoxGeometry(20, 20, 20);
                 const mtl = new THREE.MeshBasicMaterial({ color: 0xff0000 });
                 const box = new THREE.Mesh(geom, mtl);
                 const loader = new GLTFLoader();
                 loader.parse(JSON.stringify(cube), "", (gltf) => {
-                    arjs.add(gltf.scene, pos.coords.longitude, pos.coords.latitude - 0.0001, 0);
+                    arjs.add(gltf.scene, pos.coords.longitude, pos.coords.latitude - 0.001, 0);
                 });
             }
         });
 
-        arjs.startGps();
+        // arjs.startGps();
+        arjs.fakeGPS(-0.72, 51.051);
 
         // initEvents(camera);
         let requestID: number;

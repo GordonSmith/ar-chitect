@@ -2,8 +2,9 @@ import * as React from "react";
 // import * as ReactDOM from "react-dom";
 import { MapboxOverlay as DeckOverlay } from '@deck.gl/mapbox/typed';
 import DeckGL from '@deck.gl/react/typed';
-// import { MapView, FirstPersonView } from '@deck.gl/core/typed';
+import { FirstPersonView } from '@deck.gl/core/typed';
 import { StaticMap, MapContext, NavigationControl } from 'react-map-gl';
+import { TileLayer } from '@deck.gl/geo-layers/typed';
 import { ScenegraphLayer } from '@deck.gl/mesh-layers/typed';
 
 // import { ScenegraphLayer } from '@deck.gl/mesh-layers/typed';
@@ -64,6 +65,7 @@ export function MyMap() {
 
     const [xOrig, yOrig, zOrig, x, y, rotX, rotY, rotZ, fov, zoom, error] = useAR();
 
+    const [view, setView] = React.useState(new FirstPersonView({ id: "pov" }));
     const [viewState, setViewState] = React.useState(INITIAL_VIEW_STATE);
 
     React.useEffect(() => {
@@ -80,13 +82,13 @@ export function MyMap() {
         // console.log(x, y, radians_to_degrees(rotX), radians_to_degrees(rotY), rotZ, fov, zoom)
     }, [xOrig, yOrig, x, y, rotX, rotY, rotZ, fov, zoom, error]);
 
-    const layer = new ScenegraphLayer({
+    const sceneLayer = new ScenegraphLayer({
         id: 'scenegraph-layer',
         data: [cube],
         pickable: true,
         scenegraph: 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/BoxAnimated/glTF-Binary/BoxAnimated.glb',
         getPosition: d => {
-            return [xOrig, yOrig, 0];
+            return [xOrig, yOrig, zOrig];
         },
         getOrientation: d => [0, 0, 90],
         sizeScale: 20,
@@ -94,10 +96,11 @@ export function MyMap() {
     });
 
     return <DeckGL
+        // views={view}
         viewState={viewState}
         controller={true}
         ContextProvider={MapContext.Provider as any}
-        layers={[layer]}>
+        layers={[sceneLayer]}>
         <StaticMap mapStyle={MAP_STYLE} />
         <NavigationControl style={NAV_CONTROL_STYLE} />
     </DeckGL>;
